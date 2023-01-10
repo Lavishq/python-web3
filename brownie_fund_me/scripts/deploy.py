@@ -25,6 +25,7 @@ def deploy_fund_me():
         price_feed_address = MockV3Aggregator[-1].address
 
     fund_me = FundMe.deploy(
+        price_feed_address,
         {"from": account},
         publish_source=config["networks"][network.show_active()].get("verfiy"),
     )
