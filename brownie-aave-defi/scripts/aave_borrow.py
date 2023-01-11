@@ -46,6 +46,31 @@ def main():
     print("We borrowed some DAI!")
     get_borrowable_data(lending_pool, account)
 
+    # I made an oopsie in the video with this!! # idk why thi was present in the repo so i am keeping it in case
+    # repay_all(Web3.toWei(amount_dai_to_borrow, "ether"), lending_pool, account)
+    get_borrowable_data(lending_pool, account)
+    print(
+        "You just deposited, borrowed, and repayed with Aave, Brownie, and Chainlink!"
+    )
+
+
+def repay_all(amount, lending_pool, account):
+    approve_erc20(
+        Web3.toWei(amount, "ether"),
+        lending_pool,
+        config["networks"][network.show_active()]["dai_token"],
+        account,
+    )
+    repay_tx = lending_pool.repay(
+        config["networks"][network.show_active()]["dai_token"],
+        amount,
+        1,
+        account.address,
+        {"from": account},
+    )
+    repay_tx.wait(1)
+    print("Repaid!")
+
 
 def get_asset_price(price_feed_address):
     dai_eth_price_feed = interface.IAggregatorV3Interface(price_feed_address)
@@ -91,3 +116,18 @@ def get_lending_pool():
     # Contract -> connecting abi with address (since abi is derived from interface)
     lending_pool = interface.ILendingPool(lending_pool_address)
     return lending_pool
+
+
+# i didn't test repay all on testnet but local chain and below is what was present in chronological update for defi lesson so pasting it just in case
+
+
+#     The Aave testnet site has moved from https://testnet.aave.com to https://staging.aave.com and some of the functionality is lost :(
+#     For our repay_all function, we originally had:
+
+# repay_all(AMOUNT, lending_pool, account)
+
+# But it should be:
+
+# repay_all(Web3.toWei(amount_dai_to_borrow, "ether"), lending_pool, account)
+
+# We want to pay back the DAI not the ETH! Just remember, you'll still have a vveerrrryyyy small amount of DAI borrowed because of interest. If you see something with an E in it, you did it right!
